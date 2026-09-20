@@ -54,7 +54,18 @@ export default function Home() {
       </header>
 
       <main className="flex-1">
-        <section className="relative overflow-hidden">
+        <section className="relative min-h-[560px] overflow-hidden sm:min-h-[680px]">
+          <video
+            className="absolute inset-0 -z-20 h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source src="/videos/hero-graduates.webm" type="video/webm" />
+            <source src="/videos/hero-graduates.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 -z-10 bg-[#05070f]/70" />
           <div
             className="pointer-events-none absolute inset-0 -z-10"
             style={{
@@ -62,12 +73,12 @@ export default function Home() {
                 "radial-gradient(60% 50% at 50% 0%, rgba(56,132,255,0.25) 0%, rgba(5,7,15,0) 70%)",
             }}
           />
-          <div className="mx-auto flex max-w-4xl flex-col items-center px-6 py-20 text-center sm:py-28">
+          <div className="relative mx-auto flex h-full min-h-[560px] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center sm:min-h-[680px] sm:py-28">
             <Image
               src={logo}
               alt="ElimuPro logo"
-              width={160}
-              height={160}
+              width={120}
+              height={120}
               className="mb-8 rounded-2xl shadow-[0_0_60px_-10px_rgba(56,132,255,0.6)]"
               priority
             />
