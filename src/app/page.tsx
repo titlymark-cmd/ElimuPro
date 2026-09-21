@@ -1,5 +1,8 @@
 import Image from "next/image";
 import logo from "../../public/images/elimupro-logo.jpg";
+import studentsShowcase from "../../public/images/students-showcase.jpg";
+import parentsShowcase from "../../public/images/parents-showcase.jpg";
+import classroomSlide from "../../public/images/classroom-slide.jpg";
 
 const pillars = [
   {
@@ -27,6 +30,27 @@ const pillars = [
     icon: "🚀",
   },
 ];
+
+const dashboards = [
+  {
+    role: "Students",
+    title: "A dashboard students actually check",
+    description:
+      "Timetables, grades, attendance, and upcoming assignments in one clean view — so students always know where they stand.",
+    features: ["Live grades & report cards", "Class timetable", "Assignment tracker"],
+    image: studentsShowcase,
+  },
+  {
+    role: "Parents",
+    title: "Everything a parent needs, no school visit required",
+    description:
+      "Track your child's fees balance, attendance, and performance from your phone, with instant alerts when something needs attention.",
+    features: ["Fee statements & payments", "Attendance alerts", "Performance updates"],
+    image: parentsShowcase,
+  },
+];
+
+const slides = [{ image: classroomSlide, caption: "Classrooms staying connected with ElimuPro" }];
 
 export default function Home() {
   return (
@@ -131,6 +155,85 @@ export default function Home() {
                 <h3 className="mt-4 text-lg font-semibold">{pillar.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-white/60">
                   {pillar.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Built for every role
+            </h2>
+            <p className="mt-4 text-white/60">
+              Students and parents each get a dashboard tailored to what they
+              need to see.
+            </p>
+          </div>
+          <div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
+            {dashboards.map((dashboard) => (
+              <div
+                key={dashboard.role}
+                className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]"
+              >
+                <div className="relative aspect-[16/10] w-full">
+                  <Image
+                    src={dashboard.image}
+                    alt={dashboard.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#05070f] via-[#05070f]/10 to-transparent" />
+                  <span className="absolute left-5 top-5 rounded-full border border-sky-400/40 bg-[#05070f]/70 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-sky-300">
+                    {dashboard.role} Dashboard
+                  </span>
+                </div>
+                <div className="p-6 sm:p-8">
+                  <h3 className="text-xl font-semibold">{dashboard.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/60">
+                    {dashboard.description}
+                  </p>
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {dashboard.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/70"
+                      >
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="py-16 sm:py-24">
+          <div className="mx-auto max-w-2xl px-6 text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              ElimuPro in schools
+            </h2>
+            <p className="mt-4 text-white/60">
+              A look at classrooms and communities using ElimuPro every day.
+            </p>
+          </div>
+          <div className="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto px-6 pb-4 sm:px-[max(1.5rem,calc((100vw-72rem)/2))]">
+            {slides.map((slide) => (
+              <div
+                key={slide.caption}
+                className="relative aspect-[4/3] w-[85vw] flex-shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 sm:w-[420px]"
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.caption}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05070f]/90 via-transparent to-transparent" />
+                <p className="absolute bottom-5 left-5 right-5 text-sm font-medium text-white/90">
+                  {slide.caption}
                 </p>
               </div>
             ))}
