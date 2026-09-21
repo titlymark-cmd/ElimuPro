@@ -1,4 +1,5 @@
 import Image from "next/image";
+import IntroLogo from "./IntroLogo";
 import logo from "../../public/images/elimupro-logo.jpg";
 import studentsShowcase from "../../public/images/students-showcase.jpg";
 import parentsShowcase from "../../public/images/parents-showcase.jpg";
@@ -55,6 +56,7 @@ const slides = [{ image: classroomSlide, caption: "Classrooms staying connected 
 export default function Home() {
   return (
     <div className="flex min-h-full flex-col">
+      <IntroLogo />
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#05070f]/70 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
