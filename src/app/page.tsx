@@ -55,26 +55,28 @@ const slides = [{ image: classroomSlide, caption: "Classrooms staying connected 
 export default function Home() {
   return (
     <div className="flex min-h-full flex-col">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-3">
-          <Image
-            src={logo}
-            alt="ElimuPro logo"
-            width={40}
-            height={40}
-            className="rounded-md"
-            priority
-          />
-          <span className="text-lg font-semibold tracking-tight">
-            Elimu<span className="text-sky-400">Pro</span>
-          </span>
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#05070f]/70 backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <Image
+              src={logo}
+              alt="ElimuPro logo"
+              width={40}
+              height={40}
+              className="rounded-md"
+              priority
+            />
+            <span className="text-lg font-semibold tracking-tight">
+              Elimu<span className="text-sky-400">Pro</span>
+            </span>
+          </div>
+          <a
+            href="#get-started"
+            className="rounded-full border border-sky-400/40 px-5 py-2 text-sm font-medium text-sky-300 transition hover:border-sky-300 hover:bg-sky-400/10"
+          >
+            Get Started
+          </a>
         </div>
-        <a
-          href="#get-started"
-          className="rounded-full border border-sky-400/40 px-5 py-2 text-sm font-medium text-sky-300 transition hover:border-sky-300 hover:bg-sky-400/10"
-        >
-          Get Started
-        </a>
       </header>
 
       <main className="flex-1">
@@ -98,14 +100,22 @@ export default function Home() {
             }}
           />
           <div className="relative mx-auto flex h-full min-h-[560px] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center sm:min-h-[680px] sm:py-28">
-            <Image
-              src={logo}
-              alt="ElimuPro logo"
-              width={120}
-              height={120}
-              className="mb-8 rounded-2xl shadow-[0_0_60px_-10px_rgba(56,132,255,0.6)]"
-              priority
-            />
+            <div className="relative mb-10">
+              <div className="absolute -inset-8 -z-10 animate-glow-pulse rounded-[48px] bg-sky-400/40 blur-3xl" />
+              <div className="relative overflow-hidden rounded-[32px] border border-white/20 bg-white/5 p-4 shadow-[0_0_90px_-15px_rgba(56,132,255,0.85)] backdrop-blur-xl sm:p-5">
+                <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[32px]">
+                  <div className="animate-glow-sweep absolute inset-y-0 left-1/2 w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent blur-md" />
+                </div>
+                <Image
+                  src={logo}
+                  alt="ElimuPro logo"
+                  width={200}
+                  height={200}
+                  className="relative rounded-2xl"
+                  priority
+                />
+              </div>
+            </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
               Every student journey,
               <span className="block text-sky-400">managed in one place</span>
@@ -149,7 +159,7 @@ export default function Home() {
             {pillars.map((pillar) => (
               <div
                 key={pillar.title}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-sky-400/40 hover:bg-white/[0.05]"
+                className="tech-card border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition hover:border-sky-400/50 hover:bg-white/[0.06] hover:shadow-[0_0_45px_-15px_rgba(56,132,255,0.9)]"
               >
                 <div className="text-3xl">{pillar.icon}</div>
                 <h3 className="mt-4 text-lg font-semibold">{pillar.title}</h3>
@@ -175,14 +185,14 @@ export default function Home() {
             {dashboards.map((dashboard) => (
               <div
                 key={dashboard.role}
-                className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]"
+                className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition hover:border-sky-400/40 hover:shadow-[0_0_60px_-20px_rgba(56,132,255,0.8)]"
               >
                 <div className="relative aspect-[16/10] w-full">
                   <Image
                     src={dashboard.image}
                     alt={dashboard.title}
                     fill
-                    className="object-cover"
+                    className="object-cover transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#05070f] via-[#05070f]/10 to-transparent" />
                   <span className="absolute left-5 top-5 rounded-full border border-sky-400/40 bg-[#05070f]/70 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-sky-300">
@@ -223,7 +233,7 @@ export default function Home() {
             {slides.map((slide) => (
               <div
                 key={slide.caption}
-                className="relative aspect-[4/3] w-[85vw] flex-shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 sm:w-[420px]"
+                className="relative aspect-[4/3] w-[85vw] flex-shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 backdrop-blur-sm transition hover:border-sky-400/40 hover:shadow-[0_0_60px_-20px_rgba(56,132,255,0.8)] sm:w-[420px]"
               >
                 <Image
                   src={slide.image}
@@ -241,7 +251,7 @@ export default function Home() {
         </section>
 
         <section className="mx-auto max-w-4xl px-6 pb-24">
-          <div className="rounded-3xl border border-sky-400/20 bg-gradient-to-br from-sky-500/10 to-transparent p-10 text-center sm:p-16">
+          <div className="rounded-3xl border border-sky-400/20 bg-gradient-to-br from-sky-500/10 to-transparent p-10 text-center backdrop-blur-sm shadow-[0_0_80px_-25px_rgba(56,132,255,0.7)] sm:p-16">
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
               Ready to bring your school onto ElimuPro?
             </h2>

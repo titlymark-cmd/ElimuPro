@@ -17,3 +17,53 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Angular "tech" card: cut corners top-right / bottom-left, used for the
+   data-forward pillar cards to contrast with the rounded photo cards. */
+.tech-card {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 22px) 0,
+    100% 22px,
+    100% 100%,
+    22px 100%,
+    0 calc(100% - 22px)
+  );
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.94);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes glow-sweep {
+  0% {
+    transform: translateX(-55%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(55%);
+    opacity: 0;
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4.5s ease-in-out infinite;
+}
+
+.animate-glow-sweep {
+  animation: glow-sweep 3.2s ease-in-out infinite alternate;
+}
