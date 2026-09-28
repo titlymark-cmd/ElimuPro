@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
-
-function gradeFor(percent: number, bands: { label: string; min_percent: number; max_percent: number }[]): string {
-  const band = bands.find((b) => percent >= Number(b.min_percent) && percent <= Number(b.max_percent));
-  return band?.label ?? "—";
-}
+import { gradeFor } from "@/lib/grading";
 
 export async function LearnerPortalView({
   schoolId,
