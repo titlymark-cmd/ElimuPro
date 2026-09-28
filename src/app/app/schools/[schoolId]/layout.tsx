@@ -21,6 +21,7 @@ export default async function SchoolLayout({
 
   const canManage = ["school_owner", "school_admin", "headteacher"].includes(membership.role);
   const canManageStaff = ["school_owner", "school_admin"].includes(membership.role);
+  const canManageFinance = ["school_owner", "school_admin", "bursar"].includes(membership.role);
 
   return (
     <div>
@@ -59,6 +60,14 @@ export default async function SchoolLayout({
                 Learners
               </Link>
             </>
+          )}
+          {canManageFinance && (
+            <Link
+              href={`/app/schools/${schoolId}/finance`}
+              className="rounded-full border border-white/10 px-4 py-2 font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+            >
+              Finance
+            </Link>
           )}
           {canManageStaff && (
             <Link
