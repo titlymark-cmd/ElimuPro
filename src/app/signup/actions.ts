@@ -51,6 +51,7 @@ export async function signupAction(_prevState: SignupFormState, formData: FormDa
     if (error.message.includes("email_taken")) {
       return { errors: { email: "An account with this email already exists." } };
     }
+    console.error("[signupAction] create_school_owner_signup RPC failed:", error);
     return { message: "Something went wrong creating your school. Please try again." };
   }
 

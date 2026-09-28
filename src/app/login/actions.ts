@@ -41,7 +41,13 @@ export async function loginAction(_prevState: LoginFormState, formData: FormData
 
   const genericError = { message: "Incorrect email or password." };
 
-  if (error || !user) {
+  if (error) {
+    console.error("[loginAction] users lookup failed:", error);
+    await recordLoginAttempt({ userId: null, email, ipAddress, userAgent, success: false });
+    return genericError;
+  }
+
+  if (!user) {
     await recordLoginAttempt({ userId: null, email, ipAddress, userAgent, success: false });
     return genericError;
   }
