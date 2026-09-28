@@ -7,6 +7,7 @@ import { GuardianForm } from "./GuardianForm";
 import { StatusSelect } from "./StatusSelect";
 import { InvitePortalButton } from "./InvitePortalButton";
 import { LearnerEmailField } from "./LearnerEmailField";
+import { DocumentsSection } from "./documents/DocumentsSection";
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
   mother: "Mother",
@@ -117,6 +118,8 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
           <GuardianForm action={boundAddGuardian} />
         </div>
       </div>
+
+      <DocumentsSection schoolId={schoolId} learnerId={learnerId} />
     </div>
   );
 }
