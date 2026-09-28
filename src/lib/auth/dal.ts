@@ -9,6 +9,7 @@ export interface SessionUser {
   email: string;
   fullName: string;
   status: "active" | "suspended";
+  isPlatformAdmin: boolean;
 }
 
 /**
@@ -24,19 +25,39 @@ export const verifySession = cache(async (): Promise<SessionUser | null> => {
 
   const { data, error } = await supabaseAdmin()
     .from("users")
-    .select("id, email, full_name, status")
+    .select("id, email, full_name, status, is_platform_admin")
     .eq("id", session.userId)
     .maybeSingle();
 
   if (error || !data || data.status !== "active") return null;
 
-  return { id: data.id, email: data.email, fullName: data.full_name, status: data.status };
+  return {
+    id: data.id,
+    email: data.email,
+    fullName: data.full_name,
+    status: data.status,
+    isPlatformAdmin: data.is_platform_admin,
+  };
 });
 
 /** For Server Components/Actions that must have a logged-in user. */
 export async function requireUser(): Promise<SessionUser> {
   const user = await verifySession();
   if (!user) redirect("/login");
+  return user;
+}
+
+/**
+ * For the cross-tenant platform console only. Distinct from
+ * requireSchoolMembership — a platform admin oversees every school but
+ * is not "a member" of any single one, so this never substitutes for a
+ * school-scoped permission check.
+ */
+export async function requirePlatformAdmin(): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!user.isPlatformAdmin) {
+    throw new Error("You do not have access to the platform console.");
+  }
   return user;
 }
 

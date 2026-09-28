@@ -25,6 +25,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           >
             Dashboard
           </Link>
+          {user.isPlatformAdmin && (
+            <Link
+              href="/app/admin"
+              className="rounded-xl px-3 py-2 font-medium text-white/80 transition hover:bg-white/[0.06] hover:text-white"
+            >
+              Platform Admin
+            </Link>
+          )}
         </nav>
 
         <div className="mt-6 border-t border-white/10 pt-4">
@@ -42,7 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </aside>
 
       <main className="flex-1 px-6 py-10 sm:px-10">
-        {memberships.length === 0 ? (
+        {memberships.length === 0 && !user.isPlatformAdmin ? (
           <div className="rounded-3xl border border-amber-400/20 bg-amber-400/5 p-6 text-sm text-amber-200">
             Your account isn&apos;t linked to any school yet.
           </div>
