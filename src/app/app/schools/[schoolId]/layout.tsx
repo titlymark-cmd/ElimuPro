@@ -52,6 +52,12 @@ export default async function SchoolLayout({
               >
                 Classes
               </Link>
+              <Link
+                href={`/app/schools/${schoolId}/learners`}
+                className="rounded-full border border-white/10 px-4 py-2 font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+              >
+                Learners
+              </Link>
             </>
           )}
           {canManageStaff && (
