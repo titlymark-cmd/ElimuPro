@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { InviteGuardianResult } from "../actions";
+import type { InvitePortalResult } from "../actions";
 
-export function InviteGuardianButton({ action }: { action: () => Promise<InviteGuardianResult> }) {
+export function InvitePortalButton({ action, label }: { action: () => Promise<InvitePortalResult>; label: string }) {
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<InviteGuardianResult | null>(null);
+  const [result, setResult] = useState<InvitePortalResult | null>(null);
   const [copied, setCopied] = useState(false);
 
   if (result?.inviteLink) {
@@ -40,7 +40,7 @@ export function InviteGuardianButton({ action }: { action: () => Promise<InviteG
         onClick={() => startTransition(async () => setResult(await action()))}
         className="rounded-full border border-sky-400/40 px-3 py-1 text-xs font-medium text-sky-300 transition hover:border-sky-300 hover:bg-sky-400/10 disabled:opacity-50"
       >
-        {pending ? "Creating…" : "Invite to portal"}
+        {pending ? "Creating…" : label}
       </button>
       {result?.message && <p className="mt-1 text-xs text-rose-400">{result.message}</p>}
     </div>

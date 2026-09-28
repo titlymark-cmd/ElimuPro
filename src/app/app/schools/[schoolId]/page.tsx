@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireSchoolMembership } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
@@ -8,6 +9,10 @@ export default async function SchoolOverviewPage({ params }: { params: Promise<{
 
   if (membership.role === "parent") {
     return <ParentOverview schoolId={schoolId} userId={user.id} />;
+  }
+
+  if (membership.role === "learner") {
+    redirect(`/app/schools/${schoolId}/portal/me`);
   }
 
   const admin = supabaseAdmin();

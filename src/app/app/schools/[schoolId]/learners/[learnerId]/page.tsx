@@ -2,10 +2,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireSchoolMembership } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { addGuardianAction, inviteGuardianAction, updateLearnerStatusAction } from "../actions";
+import { addGuardianAction, inviteGuardianAction, inviteLearnerAction, updateLearnerEmailAction, updateLearnerStatusAction } from "../actions";
 import { GuardianForm } from "./GuardianForm";
 import { StatusSelect } from "./StatusSelect";
-import { InviteGuardianButton } from "./InviteGuardianButton";
+import { InvitePortalButton } from "./InvitePortalButton";
+import { LearnerEmailField } from "./LearnerEmailField";
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
   mother: "Mother",
@@ -21,7 +22,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
   const [{ data: learner }, { data: guardians }] = await Promise.all([
     admin
       .from("learners")
-      .select("id, admission_number, first_name, last_name, date_of_birth, gender, status, classes(name), streams(name)")
+      .select("id, admission_number, first_name, last_name, date_of_birth, gender, status, email, user_id, classes(name), streams(name)")
       .eq("id", learnerId)
       .eq("school_id", schoolId)
       .maybeSingle(),
@@ -38,6 +39,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
   const stream = Array.isArray(learner.streams) ? learner.streams[0] : learner.streams;
   const boundAddGuardian = addGuardianAction.bind(null, schoolId, learnerId);
   const boundUpdateStatus = updateLearnerStatusAction.bind(null, schoolId, learnerId);
+  const boundUpdateEmail = updateLearnerEmailAction.bind(null, schoolId, learnerId);
 
   return (
     <div className="space-y-10">
@@ -56,6 +58,23 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
             </p>
           </div>
           <StatusSelect current={learner.status} action={boundUpdateStatus} />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold">Learner portal access</h3>
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white/50">Learner&apos;s own email (optional)</p>
+          <LearnerEmailField action={boundUpdateEmail} currentEmail={learner.email} />
+          <div className="mt-3">
+            {learner.user_id ? (
+              <p className="text-xs text-emerald-300">Has portal access</p>
+            ) : learner.email ? (
+              <InvitePortalButton action={inviteLearnerAction.bind(null, schoolId, learnerId, learner.email)} label="Invite to portal" />
+            ) : (
+              <p className="text-xs text-white/30">Add an email above to invite this learner to their own portal.</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -81,7 +100,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
                   <p className="mt-2 text-xs text-emerald-300">Has portal access</p>
                 ) : g.email ? (
                   <div className="mt-2">
-                    <InviteGuardianButton action={inviteGuardianAction.bind(null, schoolId, learnerId, g.email)} />
+                    <InvitePortalButton action={inviteGuardianAction.bind(null, schoolId, learnerId, g.email)} label="Invite to portal" />
                   </div>
                 ) : (
                   <p className="mt-2 text-xs text-white/30">Add an email to invite this guardian to the portal.</p>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import * as z from "zod";
 import { requireSchoolMembership } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { generateToken, hashToken } from "@/lib/auth/token";
@@ -128,14 +129,18 @@ export async function addGuardianAction(
   return {};
 }
 
-export interface InviteGuardianResult {
+export interface InvitePortalResult {
   inviteLink?: string;
   message?: string;
 }
 
-export async function inviteGuardianAction(schoolId: string, learnerId: string, email: string): Promise<InviteGuardianResult> {
-  const { user } = await requireSchoolMembership(schoolId, ["school_owner", "school_admin", "headteacher"]);
-
+async function createLearnerScopedInvite(
+  schoolId: string,
+  learnerId: string,
+  email: string,
+  role: "parent" | "learner",
+  invitedBy: string
+): Promise<InvitePortalResult> {
   const token = generateToken();
   const { error } = await supabaseAdmin()
     .from("invitations")
@@ -143,21 +148,68 @@ export async function inviteGuardianAction(schoolId: string, learnerId: string, 
       school_id: schoolId,
       learner_id: learnerId,
       email,
-      role: "parent",
+      role,
       token_hash: hashToken(token),
-      invited_by: user.id,
+      invited_by: invitedBy,
       expires_at: new Date(Date.now() + INVITE_TTL_MS).toISOString(),
     });
 
   if (error) {
     if (error.message.includes("duplicate key")) {
-      return { message: "There's already a pending portal invite for this guardian." };
+      return { message: "There's already a pending portal invite for this email and role." };
     }
-    console.error("[inviteGuardianAction] insert failed:", error);
+    console.error("[createLearnerScopedInvite] insert failed:", error);
     return { message: "Something went wrong creating the invite. Please try again." };
   }
 
   revalidatePath(`/app/schools/${schoolId}/learners/${learnerId}`);
   const origin = await currentOrigin();
   return { inviteLink: `${origin}/invite/${token}` };
+}
+
+export async function inviteGuardianAction(schoolId: string, learnerId: string, email: string): Promise<InvitePortalResult> {
+  const { user } = await requireSchoolMembership(schoolId, ["school_owner", "school_admin", "headteacher"]);
+  return createLearnerScopedInvite(schoolId, learnerId, email, "parent", user.id);
+}
+
+export async function inviteLearnerAction(schoolId: string, learnerId: string, email: string): Promise<InvitePortalResult> {
+  const { user } = await requireSchoolMembership(schoolId, ["school_owner", "school_admin", "headteacher"]);
+  return createLearnerScopedInvite(schoolId, learnerId, email, "learner", user.id);
+}
+
+export interface LearnerEmailFormState {
+  errors?: Partial<Record<"email", string>>;
+  message?: string;
+}
+
+export async function updateLearnerEmailAction(
+  schoolId: string,
+  learnerId: string,
+  _prevState: LearnerEmailFormState,
+  formData: FormData
+): Promise<LearnerEmailFormState> {
+  await requireSchoolMembership(schoolId, ["school_owner", "school_admin", "headteacher"]);
+
+  const raw = formData.get("email");
+  const email = typeof raw === "string" ? raw.trim() : "";
+  if (email) {
+    const parsed = z.email().safeParse(email);
+    if (!parsed.success) {
+      return { errors: { email: "Enter a valid email address." } };
+    }
+  }
+
+  const { error } = await supabaseAdmin()
+    .from("learners")
+    .update({ email: email || null, updated_at: new Date().toISOString() })
+    .eq("id", learnerId)
+    .eq("school_id", schoolId);
+
+  if (error) {
+    console.error("[updateLearnerEmailAction] update failed:", error);
+    return { message: "Something went wrong saving the email. Please try again." };
+  }
+
+  revalidatePath(`/app/schools/${schoolId}/learners/${learnerId}`);
+  return {};
 }
