@@ -1,9 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { requireSchoolMembership } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { generateToken, hashToken } from "@/lib/auth/token";
 import { learnerSchema, guardianSchema, LEARNER_STATUSES } from "@/lib/validation/learners";
+
+const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+async function currentOrigin(): Promise<string> {
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const host = h.get("host");
+  return `${proto}://${host}`;
+}
 
 export interface LearnerFormState {
   errors?: Partial<Record<"firstName" | "lastName" | "dateOfBirth" | "gender" | "classId" | "streamId", string>>;
@@ -115,4 +126,38 @@ export async function addGuardianAction(
 
   revalidatePath(`/app/schools/${schoolId}/learners/${learnerId}`);
   return {};
+}
+
+export interface InviteGuardianResult {
+  inviteLink?: string;
+  message?: string;
+}
+
+export async function inviteGuardianAction(schoolId: string, learnerId: string, email: string): Promise<InviteGuardianResult> {
+  const { user } = await requireSchoolMembership(schoolId, ["school_owner", "school_admin", "headteacher"]);
+
+  const token = generateToken();
+  const { error } = await supabaseAdmin()
+    .from("invitations")
+    .insert({
+      school_id: schoolId,
+      learner_id: learnerId,
+      email,
+      role: "parent",
+      token_hash: hashToken(token),
+      invited_by: user.id,
+      expires_at: new Date(Date.now() + INVITE_TTL_MS).toISOString(),
+    });
+
+  if (error) {
+    if (error.message.includes("duplicate key")) {
+      return { message: "There's already a pending portal invite for this guardian." };
+    }
+    console.error("[inviteGuardianAction] insert failed:", error);
+    return { message: "Something went wrong creating the invite. Please try again." };
+  }
+
+  revalidatePath(`/app/schools/${schoolId}/learners/${learnerId}`);
+  const origin = await currentOrigin();
+  return { inviteLink: `${origin}/invite/${token}` };
 }

@@ -6,6 +6,7 @@ const LINKS = [
   { href: "grading", label: "Grading scale", description: "Configure your school's own grading bands." },
   { href: "assessments", label: "Assessments & marks", description: "Create assessments and enter marks." },
   { href: "report-cards", label: "Report cards", description: "View a learner's report card for the current term." },
+  { href: "attendance", label: "Attendance", description: "Mark daily attendance for a class." },
 ];
 
 export default async function AcademicsIndexPage({ params }: { params: Promise<{ schoolId: string }> }) {

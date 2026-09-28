@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireSchoolMembership } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { addGuardianAction, updateLearnerStatusAction } from "../actions";
+import { addGuardianAction, inviteGuardianAction, updateLearnerStatusAction } from "../actions";
 import { GuardianForm } from "./GuardianForm";
 import { StatusSelect } from "./StatusSelect";
+import { InviteGuardianButton } from "./InviteGuardianButton";
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
   mother: "Mother",
@@ -26,7 +27,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
       .maybeSingle(),
     admin
       .from("learner_guardians")
-      .select("id, full_name, phone, email, relationship, is_primary")
+      .select("id, full_name, phone, email, relationship, is_primary, user_id")
       .eq("learner_id", learnerId)
       .order("is_primary", { ascending: false }),
   ]);
@@ -76,6 +77,15 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
                   )}
                 </div>
                 <p className="mt-1 text-xs text-white/50">{[g.phone, g.email].filter(Boolean).join(" · ") || "No contact info"}</p>
+                {g.user_id ? (
+                  <p className="mt-2 text-xs text-emerald-300">Has portal access</p>
+                ) : g.email ? (
+                  <div className="mt-2">
+                    <InviteGuardianButton action={inviteGuardianAction.bind(null, schoolId, learnerId, g.email)} />
+                  </div>
+                ) : (
+                  <p className="mt-2 text-xs text-white/30">Add an email to invite this guardian to the portal.</p>
+                )}
               </div>
             ))}
           </div>
