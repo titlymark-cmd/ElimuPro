@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { requireUser, getSchoolMemberships } from "@/lib/auth/dal";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
@@ -38,16 +39,17 @@ export default async function DashboardPage() {
         {memberships.map((membership) => {
           const school = schools?.find((s) => s.id === membership.schoolId);
           return (
-            <div
+            <Link
               key={`${membership.schoolId}-${membership.role}`}
-              className="tech-card border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition hover:border-sky-400/50 hover:bg-white/[0.06]"
+              href={`/app/schools/${membership.schoolId}`}
+              className="tech-card block border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition hover:border-sky-400/50 hover:bg-white/[0.06]"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-sky-300">
                 {ROLE_LABELS[membership.role] ?? membership.role}
               </p>
               <h3 className="mt-2 text-lg font-semibold">{school?.name ?? "—"}</h3>
               <p className="mt-1 text-xs capitalize text-white/50">{school?.status ?? "unknown"}</p>
-            </div>
+            </Link>
           );
         })}
       </div>
