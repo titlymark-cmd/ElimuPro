@@ -124,6 +124,16 @@ export default async function ChildPortalPage({ params }: { params: Promise<{ sc
             KES {Math.abs(balance).toLocaleString()}
           </p>
           <p className="mt-1 text-xs text-white/50">{balance > 0 ? "Due" : "Paid up"}</p>
+          {balance > 0 && (
+            <button
+              type="button"
+              disabled
+              title="M-Pesa payment isn't set up yet — ask the school office how to pay in the meantime."
+              className="mt-3 w-full cursor-not-allowed rounded-full border border-white/10 bg-white/[0.02] px-4 py-2 text-xs font-medium text-white/30"
+            >
+              Pay via M-Pesa — Coming Soon
+            </button>
+          )}
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm">
           <p className="text-xs font-semibold uppercase tracking-wide text-sky-300">Attendance (present)</p>
