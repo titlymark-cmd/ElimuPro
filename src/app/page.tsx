@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import IntroLogo from "./IntroLogo";
 import logo from "../../public/images/elimupro-logo.jpg";
 import studentsShowcase from "../../public/images/students-showcase.jpg";
@@ -72,12 +73,12 @@ export default function Home() {
               Elimu<span className="text-sky-400">Pro</span>
             </span>
           </div>
-          <a
-            href="#get-started"
+          <Link
+            href="/signup"
             className="rounded-full border border-sky-400/40 px-5 py-2 text-sm font-medium text-sky-300 transition hover:border-sky-300 hover:bg-sky-400/10"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </header>
 

@@ -20,6 +20,7 @@ export default async function SchoolLayout({
   if (!school) notFound();
 
   const canManage = ["school_owner", "school_admin", "headteacher"].includes(membership.role);
+  const canManageStaff = ["school_owner", "school_admin"].includes(membership.role);
 
   return (
     <div>
@@ -52,6 +53,14 @@ export default async function SchoolLayout({
                 Classes
               </Link>
             </>
+          )}
+          {canManageStaff && (
+            <Link
+              href={`/app/schools/${schoolId}/staff`}
+              className="rounded-full border border-white/10 px-4 py-2 font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+            >
+              Staff
+            </Link>
           )}
         </nav>
       </div>

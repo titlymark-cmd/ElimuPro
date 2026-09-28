@@ -1,14 +1,10 @@
 import "server-only";
-import { randomBytes, createHash } from "crypto";
 import { cookies, headers } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { generateToken, hashToken } from "@/lib/auth/token";
 
 const COOKIE_NAME = "elimupro_session";
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-function hashToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
-}
 
 async function requestMeta() {
   const h = await headers();
@@ -26,7 +22,7 @@ async function requestMeta() {
  * "log out this device" / login history actually possible.
  */
 export async function createSession(userId: string): Promise<void> {
-  const token = randomBytes(32).toString("hex");
+  const token = generateToken();
   const { ipAddress, userAgent } = await requestMeta();
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
 
